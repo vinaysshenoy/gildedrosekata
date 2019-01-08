@@ -74,4 +74,123 @@ class GildedRoseTest {
         )
     )
   }
+
+  @ParameterizedTest(name = "{0} must have qualities of {2} if waiting for {1} days")
+  @MethodSource("params for computing quality")
+  fun `quality must decrease by one after updating quality`(
+      items: List<Item>,
+      daysToRun: Int,
+      expectedQualities: List<Int>
+  ) {
+    val gildedRose = GildedRose(items = items.toTypedArray())
+
+    (0 until daysToRun).forEach {
+      gildedRose.updateQuality()
+    }
+
+    val qualiies = gildedRose.items.map { it.quality }
+
+    expectThat(qualiies).isEqualTo(expectedQualities)
+  }
+
+  fun `params for computing quality`(): List<Arguments> {
+    fun generateTestCase(items: List<Item>, daysToRun: Int, expectedQualities: List<Int>): Arguments {
+      return arguments(items, daysToRun, expectedQualities)
+    }
+
+    return listOf(
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 1, quality = 1)
+            ),
+            daysToRun = 0,
+            expectedQualities = listOf(1)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 1, quality = 1)
+            ),
+            daysToRun = 1,
+            expectedQualities = listOf(0)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 5, quality = 10)
+            ),
+            daysToRun = 5,
+            expectedQualities = listOf(5)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 5, quality = 10)
+            ),
+            daysToRun = 6,
+            expectedQualities = listOf(3)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 5, quality = 10)
+            ),
+            daysToRun = 7,
+            expectedQualities = listOf(1)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 5, quality = 10)
+            ),
+            daysToRun = 8,
+            expectedQualities = listOf(0)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 5, quality = 7)
+            ),
+            daysToRun = 1,
+            expectedQualities = listOf(6)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 5, quality = 7)
+            ),
+            daysToRun = 2,
+            expectedQualities = listOf(5)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 5, quality = 7)
+            ),
+            daysToRun = 4,
+            expectedQualities = listOf(3)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 5, quality = 7)
+            ),
+            daysToRun = 7,
+            expectedQualities = listOf(0)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 1, quality = 4)
+            ),
+            daysToRun = 2,
+            expectedQualities = listOf(1)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 1, quality = 4)
+            ),
+            daysToRun = 10,
+            expectedQualities = listOf(0)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "item 1", sellIn = 5, quality = 7),
+                Item(name = "item 2", sellIn = 2, quality = 7)
+            ),
+            daysToRun = 4,
+            expectedQualities = listOf(3, 1)
+        )
+    )
+  }
 }
