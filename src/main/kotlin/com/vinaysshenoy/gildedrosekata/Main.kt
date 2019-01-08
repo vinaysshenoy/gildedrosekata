@@ -4,11 +4,10 @@ import java.util.Locale
 
 fun main(args: Array<String>) {
   val items = listOf(
-      Item(name = "foo 1", sellIn = 30, quality = 50),
-      Item(name = "foo 2", sellIn = 10, quality = 5)
+      Item(name = "Aged Brie", sellIn = 1, quality = 38)
   )
 
-  val application = Application(itemsInStock = items, runForDays = 20)
+  val application = Application(itemsInStock = items, runForDays = 7)
   application.run()
 }
 

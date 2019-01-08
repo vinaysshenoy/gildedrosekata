@@ -193,4 +193,86 @@ class GildedRoseTest {
         )
     )
   }
+
+  @ParameterizedTest(name = "Aged Brie: {0} must have qualities of {2} if waiting for {1} days")
+  @MethodSource("params for quality of aged brie")
+  fun `quality of aged brie must increase instead of decrease`(
+      items: List<Item>,
+      daysToRun: Int,
+      expectedQualities: List<Int>
+  ) {
+    val gildedRose = GildedRose(items = items.toTypedArray())
+
+    (0 until daysToRun).forEach {
+      gildedRose.updateQuality()
+    }
+
+    val qualiies = gildedRose.items.map { it.quality }
+
+    expectThat(qualiies).isEqualTo(expectedQualities)
+  }
+
+  fun `params for quality of aged brie`() : List<Arguments> {
+    fun generateTestCase(items: List<Item>, daysToRun: Int, expectedQualities: List<Int>): Arguments {
+      return arguments(items, daysToRun, expectedQualities)
+    }
+
+    return listOf(
+        generateTestCase(
+            items = listOf(
+                Item(name = "Aged Brie", sellIn = 1, quality = 1)
+            ),
+            daysToRun = 0,
+            expectedQualities = listOf(1)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Aged Brie", sellIn = 1, quality = 1)
+            ),
+            daysToRun = 1,
+            expectedQualities = listOf(2)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Aged Brie", sellIn = 5, quality = 10)
+            ),
+            daysToRun = 5,
+            expectedQualities = listOf(15)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Aged Brie", sellIn = 5, quality = 10)
+            ),
+            daysToRun = 6,
+            expectedQualities = listOf(17)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Aged Brie", sellIn = 5, quality = 10)
+            ),
+            daysToRun = 7,
+            expectedQualities = listOf(19)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Aged Brie", sellIn = 5, quality = 10),
+                Item(name = "Aged Brie", sellIn = 25, quality = 10)
+            ),
+            daysToRun = 7,
+            expectedQualities = listOf(19, 17)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Aged Brie", sellIn = 5, quality = 10),
+                Item(name = "Aged Brie", sellIn = 25, quality = 10),
+                Item(name = "Aged Brie", sellIn = 1, quality = 36),
+                Item(name = "Aged Brie", sellIn = 1, quality = 37),
+                Item(name = "Aged Brie", sellIn = 1, quality = 38),
+                Item(name = "Aged Brie", sellIn = 1, quality = 39)
+            ),
+            daysToRun = 7,
+            expectedQualities = listOf(19, 17, 49, 50, 50, 50)
+        )
+    )
+  }
 }
