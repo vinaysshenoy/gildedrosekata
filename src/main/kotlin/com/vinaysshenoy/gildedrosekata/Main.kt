@@ -5,7 +5,7 @@ import java.util.Locale
 fun main(args: Array<String>) {
   val items = listOf(
       Item(name = "foo 1", sellIn = 30, quality = 50),
-      Item(name = "foo 2", sellIn = 10, quality = 30)
+      Item(name = "foo 2", sellIn = 10, quality = 5)
   )
 
   val application = Application(itemsInStock = items, runForDays = 20)
