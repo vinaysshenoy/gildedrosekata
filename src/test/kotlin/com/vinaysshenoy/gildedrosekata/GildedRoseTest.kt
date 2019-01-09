@@ -75,6 +75,56 @@ class GildedRoseTest {
     )
   }
 
+  @ParameterizedTest(name = "Sulfuras: {0} must have sell in days of {2} if waiting for {1} days")
+  @MethodSource("params for computing sell in days of sulfuras")
+  fun `sell in days of sulfuras must never change`(
+      items: List<Item>,
+      daysToRun: Int,
+      expectedSellInDays: List<Int>
+  ) {
+    val gildedRose = GildedRose(items = items.toTypedArray())
+
+    (0 until daysToRun).forEach {
+      gildedRose.updateQuality()
+    }
+
+    val sellInDays = gildedRose.items.map { it.sellIn }
+
+    expectThat(sellInDays).isEqualTo(expectedSellInDays)
+  }
+
+  fun `params for computing sell in days of sulfuras`(): List<Arguments> {
+    fun generateTestCase(items: List<Item>, daysToRun: Int, expectedSellInDays: List<Int>): Arguments {
+      return arguments(items, daysToRun, expectedSellInDays)
+    }
+
+    return listOf(
+        generateTestCase(
+            items = listOf(Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 1, quality = 1)),
+            daysToRun = 0,
+            expectedSellInDays = listOf(1)
+        ),
+        generateTestCase(
+            items = listOf(Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 1, quality = 1)),
+            daysToRun = 1,
+            expectedSellInDays = listOf(1)
+        ),
+        generateTestCase(
+            items = listOf(Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 5, quality = 1)),
+            daysToRun = 3,
+            expectedSellInDays = listOf(5)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 5, quality = 1),
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = -5, quality = 1)
+            ),
+            daysToRun = 6,
+            expectedSellInDays = listOf(5, -5)
+        )
+    )
+  }
+
   @ParameterizedTest(name = "{0} must have qualities of {2} if waiting for {1} days")
   @MethodSource("params for computing quality")
   fun `quality must decrease by one after updating quality`(
