@@ -100,17 +100,23 @@ class GildedRoseTest {
 
     return listOf(
         generateTestCase(
-            items = listOf(Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 1, quality = 1)),
+            items = listOf(
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 1, quality = 1)
+            ),
             daysToRun = 0,
             expectedSellInDays = listOf(1)
         ),
         generateTestCase(
-            items = listOf(Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 1, quality = 1)),
+            items = listOf(
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 1, quality = 1)
+            ),
             daysToRun = 1,
             expectedSellInDays = listOf(1)
         ),
         generateTestCase(
-            items = listOf(Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 5, quality = 1)),
+            items = listOf(
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 5, quality = 1)
+            ),
             daysToRun = 3,
             expectedSellInDays = listOf(5)
         ),
@@ -322,6 +328,69 @@ class GildedRoseTest {
             ),
             daysToRun = 7,
             expectedQualities = listOf(19, 17, 49, 50, 50, 50)
+        )
+    )
+  }
+
+  @ParameterizedTest(name = "Sulfuras: {0} must have qualities of {2} if waiting for {1} days")
+  @MethodSource("params for quality of sulfuras")
+  fun `quality of sulfuras must never change`(
+      items: List<Item>,
+      daysToRun: Int,
+      expectedQualities: List<Int>
+  ) {
+    val gildedRose = GildedRose(items = items.toTypedArray())
+
+    (0 until daysToRun).forEach {
+      gildedRose.updateQuality()
+    }
+
+    val qualiies = gildedRose.items.map { it.quality }
+
+    expectThat(qualiies).isEqualTo(expectedQualities)
+  }
+
+  fun `params for quality of sulfuras`(): List<Arguments> {
+    fun generateTestCase(items: List<Item>, daysToRun: Int, expectedQualities: List<Int>): Arguments {
+      return arguments(items, daysToRun, expectedQualities)
+    }
+
+    return listOf(
+        generateTestCase(
+            items = listOf(
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 1, quality = 0)
+            ),
+            daysToRun = 0,
+            expectedQualities = listOf(0)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 1, quality = 0)
+            ),
+            daysToRun = 1,
+            expectedQualities = listOf(0)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 3, quality = 5)
+            ),
+            daysToRun = 3,
+            expectedQualities = listOf(5)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = -5, quality = -5)
+            ),
+            daysToRun = 10,
+            expectedQualities = listOf(-5)
+        ),
+        generateTestCase(
+            items = listOf(
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = -10, quality = -5),
+                Item(name = "Sulfuras, Hand of Ragnaros", sellIn = 10, quality = 50)
+            ),
+            daysToRun = 15,
+            expectedQualities = listOf(-5, 50)
         )
     )
   }
