@@ -492,4 +492,48 @@ class GildedRoseTest {
         )
     )
   }
+
+  @ParameterizedTest
+  @MethodSource("params for all items")
+  fun `items should update properly as expected`(
+      items: List<Item>,
+      daysToRun: Int,
+      expectedItems: List<Item>
+  ) {
+    val gildedRose = GildedRose(items = items.toTypedArray())
+
+    (0 until daysToRun).forEach {
+      gildedRose.updateQuality()
+    }
+
+    expectThat(gildedRose.items.toList()).isEqualTo(expectedItems)
+  }
+
+  fun `params for all items`(): List<Arguments> {
+    fun generateTestCase(items: List<Item>, daysToRun: Int, expectedItems: List<Item>): Arguments {
+      return arguments(items, daysToRun, expectedItems)
+    }
+
+    val sulfuras = "Sulfuras, Hand of Ragnaros"
+    val backstagePasses = "Backstage passes to a TAFKAL80ETC concert"
+    val agedBrie = "Aged Brie"
+
+    return listOf(
+        generateTestCase(
+            items = listOf(
+                Item(name = "Item 1", sellIn = 5, quality = 1),
+                Item(name = sulfuras, sellIn = 3, quality = 1),
+                Item(name = "Item 2", sellIn = 2, quality = 1),
+                Item(name = sulfuras, sellIn = 5, quality = 10)
+            ),
+            daysToRun = 6,
+            expectedItems = listOf(
+                Item(name = "Item 1", sellIn = -1, quality = 0),
+                Item(name = sulfuras, sellIn = 3, quality = 1),
+                Item(name = "Item 2", sellIn = -4, quality = 0),
+                Item(name = sulfuras, sellIn = 5, quality = 10)
+            )
+        )
+    )
+  }
 }
